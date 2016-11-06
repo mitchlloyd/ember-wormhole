@@ -53,9 +53,7 @@ test('modal example', function(assert) {
 });
 
 test('sidebar example', function(assert) {
-  var sidebarWormhole;
   var header1, header2;
-  var sidebarFirstNode1, sidebarFirstNode2;
 
   visit('/');
   andThen(function() {
@@ -63,8 +61,6 @@ test('sidebar example', function(assert) {
   });
   click('button:contains(Toggle Sidebar Content)');
   andThen(function() {
-    sidebarWormhole = $('#sidebarWormhole').data('ember-wormhole');
-    sidebarFirstNode1 = sidebarWormhole._wormholeHeadNode;
     header1 = $('#sidebar h1');
     assert.contentIn('sidebar');
   });
@@ -75,11 +71,12 @@ test('sidebar example', function(assert) {
   });
   click('#sidebar button:contains(Switch)');
   andThen(function() {
-    sidebarFirstNode2 = sidebarWormhole._wormholeHeadNode;
     header2 = $('#othersidebar h1');
     assert.equal(header1.text(), header2.text(), 'same header text');
+
+    // FIXME: Fails because DOM is not stable
     assert.ok(header1.is(header2), 'same header elements'); // appended elsewhere
-    assert.ok(sidebarFirstNode1.isSameNode(sidebarFirstNode2), 'different first nodes'); // appended elsewhere
+
     assert.contentNotIn('sidebar');
     assert.contentIn('othersidebar');
   });
@@ -215,6 +212,8 @@ test('preserves focus', function (assert) {
   andThen(function() {
     assert.contentNotIn('sidebar');
     assert.contentIn('othersidebar');
+
+    // FIXME: Fails because DOM is not stable
     assert.equal(document.activeElement, focused);
   });
 });
